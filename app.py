@@ -53,23 +53,19 @@ paragraphs = st.session_state[paragraph_key]
 # --- Paragraph Editor ---
 st.subheader("📝 Edit Paragraphs")
 
+# Initialize control flags
+if "delete_index" not in st.session_state:
+    st.session_state.delete_index = None
 if "added_paragraph" not in st.session_state:
     st.session_state.added_paragraph = False
 
+# Add new paragraph
+new_para = st.text_area("Add a new paragraph", key="new_para")
 if st.button("Add Paragraph"):
     if new_para.strip():
         st.session_state[paragraph_key].append(new_para.strip())
         st.session_state.added_paragraph = True
         st.success("Paragraph added!")
-
-# Safe rerun after render
-if st.session_state.added_paragraph:
-    st.session_state.added_paragraph = False
-    st.experimental_rerun()
-
-# Handle deletion safely
-if "delete_index" not in st.session_state:
-    st.session_state.delete_index = None
 
 # Display paragraphs with delete buttons
 for i, para in enumerate(paragraphs):
@@ -78,11 +74,16 @@ for i, para in enumerate(paragraphs):
         if st.button(f"Delete Paragraph {i+1}", key=f"delete_{i}"):
             st.session_state.delete_index = i
 
-# Perform deletion after rendering
+# Safe deletion and rerun
 if st.session_state.delete_index is not None:
     del st.session_state[paragraph_key][st.session_state.delete_index]
     st.session_state.delete_index = None
     st.success("Paragraph deleted.")
+    st.experimental_rerun()
+
+# Safe add rerun
+if st.session_state.added_paragraph:
+    st.session_state.added_paragraph = False
     st.experimental_rerun()
 
 # --- Paragraph Picker ---
