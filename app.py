@@ -59,8 +59,13 @@ if st.session_state.skip:
 else:
     current_part = ' '.join(words[st.session_state.start:st.session_state.end])
 
-st.info("Memorize this part:")
-st.markdown(f"**{current_part}**")
+# Show and auto-clear the flashcard
+memorize_box = st.empty()
+memorize_box.info("Memorize this part:")
+memorize_box.markdown(f"**{current_part}**")
+time.sleep(5)
+memorize_box.empty()
+
 
 # --- Input Area ---
 st.write("Now type what you remember:")
