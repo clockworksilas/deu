@@ -1,5 +1,6 @@
 import streamlit as st
 import unidecode
+import time
 
 # --- Paragraphs ---
 spanish_paragraphs = [
