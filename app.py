@@ -53,13 +53,19 @@ paragraphs = st.session_state[paragraph_key]
 # --- Paragraph Editor ---
 st.subheader("📝 Edit Paragraphs")
 
-# Text box to add a new paragraph
-new_para = st.text_area("Add a new paragraph", key="new_para")
+if "added_paragraph" not in st.session_state:
+    st.session_state.added_paragraph = False
+
 if st.button("Add Paragraph"):
     if new_para.strip():
         st.session_state[paragraph_key].append(new_para.strip())
+        st.session_state.added_paragraph = True
         st.success("Paragraph added!")
-        st.experimental_rerun()
+
+# Safe rerun after render
+if st.session_state.added_paragraph:
+    st.session_state.added_paragraph = False
+    st.experimental_rerun()
 
 # Handle deletion safely
 if "delete_index" not in st.session_state:
