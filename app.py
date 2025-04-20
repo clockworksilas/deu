@@ -73,7 +73,7 @@ if st.button("Add Paragraph"):
         paragraphs.append(new_para.strip())
         save_paragraphs(st.session_state.paragraph_data)
         st.success("Paragraph added!")
-        st.experimental_rerun()
+        st.session_state.rerun_needed = True
 
 # Display paragraphs
 for i, para in enumerate(paragraphs):
@@ -83,7 +83,7 @@ for i, para in enumerate(paragraphs):
             del paragraphs[i]
             save_paragraphs(st.session_state.paragraph_data)
             st.success("Paragraph deleted.")
-            st.experimental_rerun()
+            st.session_state.rerun_needed = True
 
 # --- Paragraph Picker ---
 if not paragraphs:
@@ -162,3 +162,7 @@ if st.button("Review Errors"):
         st.subheader("Mistake Review")
         for index, expected, got in st.session_state.errors:
             st.write(f"- Word {index + 1}: Expected **{expected}**, got **{got}**")
+# --- Final rerun if needed ---
+if st.session_state.get("rerun_needed", False):
+    st.session_state.rerun_needed = False
+    st.experimental_rerun()
