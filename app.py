@@ -53,7 +53,7 @@ paragraphs = st.session_state[paragraph_key]
 # --- Paragraph Editor ---
 st.subheader("📝 Edit Paragraphs")
 
-# Add new paragraph
+# Text box to add a new paragraph
 new_para = st.text_area("Add a new paragraph", key="new_para")
 if st.button("Add Paragraph"):
     if new_para.strip():
@@ -61,17 +61,30 @@ if st.button("Add Paragraph"):
         st.success("Paragraph added!")
         st.experimental_rerun()
 
-# Delete a paragraph
+# Handle deletion safely
+if "delete_index" not in st.session_state:
+    st.session_state.delete_index = None
+
+# Display paragraphs with delete buttons
 for i, para in enumerate(paragraphs):
     with st.expander(f"Paragraph {i+1}"):
         st.write(para)
-        if st.button(f"Delete Paragraph {i+1}"):
-            del st.session_state[paragraph_key][i]
-            st.success("Paragraph deleted.")
-            st.experimental_rerun()
+        if st.button(f"Delete Paragraph {i+1}", key=f"delete_{i}"):
+            st.session_state.delete_index = i
+
+# Perform deletion after rendering
+if st.session_state.delete_index is not None:
+    del st.session_state[paragraph_key][st.session_state.delete_index]
+    st.session_state.delete_index = None
+    st.success("Paragraph deleted.")
+    st.experimental_rerun()
 
 # --- Paragraph Picker ---
 paragraphs = st.session_state[paragraph_key]  # Refresh after edits
+if not paragraphs:
+    st.warning("No paragraphs available. Add one above to begin.")
+    st.stop()
+
 selected_para = st.selectbox("Pick Paragraph to Practice", range(1, len(paragraphs) + 1), index=st.session_state.index)
 st.session_state.index = selected_para - 1
 words = paragraphs[st.session_state.index].split()
